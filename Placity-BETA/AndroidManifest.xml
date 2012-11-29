@@ -2,6 +2,9 @@
     package="kap.placity_beta"
     android:versionCode="1"
     android:versionName="1.0" >
+    
+    <uses-permission 
+        android:name="android.permission.INTERNET" />
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -56,6 +59,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <service android:name=".DownloadService"/>
     </application>
 
 </manifest>

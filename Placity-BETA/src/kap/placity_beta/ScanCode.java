@@ -35,6 +35,7 @@ public class ScanCode extends Activity {
     	
     	Intent i = new Intent (this, MainActivity.class);
     	i.putExtra("ID", id.getText().toString());
+    	i.putExtra("sender", "scanCode");
     	startActivity(i);
     }
 }

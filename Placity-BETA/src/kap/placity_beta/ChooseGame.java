@@ -34,6 +34,7 @@ public class ChooseGame extends Activity {
         
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
         i.putExtra("ID", name);
+        i.putExtra("sender", "chooseGame");
         startActivity(i);
         }
         });

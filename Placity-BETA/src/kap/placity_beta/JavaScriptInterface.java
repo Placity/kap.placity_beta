@@ -13,8 +13,8 @@ public class JavaScriptInterface{
         jsContext = c;
     }
     
-    public int get_qrcode(int number) {
-    	return number; 
+    public void get_qrcode() {
+    	//MainActivity.class.getField("myWebView");
     }
     
     public void End() {

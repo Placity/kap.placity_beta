@@ -29,10 +29,10 @@ public class DownloadService extends IntentService{
 	//Download of filelist and saving of individual files
 	@Override
 	protected void onHandleIntent(Intent intent) {    
-		String files = ServerInterface.getFileList(id);
-		Log.i("file", files);
-        for (String list : files.split(",")){
-			save(id, list);
+		String files = ServerInterface.getFileList(id); //Returns list of download links
+		Log.v("DS filelist", files);
+        for (String list : files.split(";")){
+			save(id, list); //Save files from list
 		}
         SystemClock.sleep(500);
         Intent i = new Intent();
@@ -41,24 +41,27 @@ public class DownloadService extends IntentService{
 	}
 	
 	//Method for saving
-	private void save(String id, String filename) {
-		Log.v(id, "fetching " + filename);
+	private void save(String id, String filelink) {
+		Log.v("save", "fetching " + filelink.substring(filelink.lastIndexOf("/")+1));
 		
-		String basePath = getDir("games", Context.MODE_PRIVATE).getAbsolutePath()+File.separator+id; //Set base directory for game
-		File dir = new File(basePath);
-		/*if (!dir.exists()){
-			dir.mkdirs(); //Create folder
-		}*/
-		dir.delete();
-		dir.mkdirs();
-		File file = new File(dir, filename); //Create a file in that directory
+		File dir = new File(getApplicationContext().getDir("games", Context.MODE_PRIVATE).getAbsolutePath() + File.separator + id); //Set base directory for game
+		Log.v("game pfad", getApplicationContext().getDir("games", Context.MODE_PRIVATE).getAbsolutePath() + File.separator + id); 
+		
+		dir.delete(); //Clear folder
+		dir.mkdirs(); //Create folder again
+		
+		String name = filelink.substring(filelink.lastIndexOf("/")+1);//Extract filename from link
+		if (name.contains("gametoxml")){ //The xml direct download is saved as source
+			name = "source.xml";
+		};
+		File file = new File(dir, name); //Create a file in that directory
 		
 		try{
 		FileOutputStream myFile = new FileOutputStream(file);
-		myFile.write(ServerInterface.getGameFile(id, filename));
+		myFile.write(ServerInterface.getGameFile(id, filelink));
 		myFile.close();}
 		catch (Exception e){
-			Log.v(id,e.getMessage());
+			Log.v("save error",e.getMessage());
 		}
 		
 	}

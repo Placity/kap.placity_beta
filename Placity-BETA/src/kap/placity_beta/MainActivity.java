@@ -23,7 +23,7 @@ import android.widget.ProgressBar;
 @SuppressLint("SetJavaScriptEnabled")
 public class MainActivity extends Activity {
 	
-	public WebView myWebView;
+	public static WebView myWebView; //TODO: static ergänzt 
 	private ProgressBar myLoadingBar;
 	private receiver start;
 	
@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
         myWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY); 
         myWebView.addJavascriptInterface(new JavaScriptInterface(this), "Android");
         
-        myWebView.loadUrl("file:///data/data/kap.placity_beta/app_games/"+id+"/0.html");
+        myWebView.loadUrl("file:///data/data/kap.placity_beta/app_games/"+id+"/0.php?count=0&points=0&code=0");
         
         myLoadingBar = (ProgressBar) findViewById(R.id.progressBar1);
         

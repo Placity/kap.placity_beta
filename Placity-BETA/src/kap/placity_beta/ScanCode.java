@@ -30,17 +30,17 @@ public class ScanCode extends Activity {
     }
     
     public void startGame(View view) {
-    	Intent download = new Intent (this, DownloadService.class);
-		  download.putExtra("ID", "59");
-		  startService(download);
-	    	
-		  Intent i = new Intent (this, MainActivity.class);
-		  i.putExtra("ID", "59");
-		  i.putExtra("sender", "scanCode");
-		  startActivity(i);  
+//    	Intent download = new Intent (this, DownloadService.class);
+//		  download.putExtra("ID", "59");
+//		  startService(download);
+//	    	
+//		  Intent i = new Intent (this, MainActivity.class);
+//		  i.putExtra("ID", "59");
+//		  i.putExtra("sender", "scanCode");
+//		  startActivity(i);  
     	
-    	//IntentIntegrator integrator = new IntentIntegrator(this);
-    	//integrator.initiateScan(); //Start external barcode scanner
+    	IntentIntegrator integrator = new IntentIntegrator(this);
+    	integrator.initiateScan(); //Start external barcode scanner
     	
     }
     

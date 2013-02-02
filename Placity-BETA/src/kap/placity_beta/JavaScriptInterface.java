@@ -29,6 +29,18 @@ public class JavaScriptInterface extends Activity{
   	  }
   	}
     
+    public boolean isResume() {
+    	return false; //TODO: Implement save position on break
+    }
+    
+    public int getResumeCount() {
+    	return 0; //TODO: Get resume count from memory
+    }
+    
+    public int getResumePoints() {
+    	return 0; //TODO: Get resume points from memory
+    }
+    
     public void End() {
     	Log.v("end", "end");
     	Intent i = new Intent (jsContext, Startscreen.class);

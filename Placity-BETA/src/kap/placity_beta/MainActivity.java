@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
         myWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY); 
         myWebView.addJavascriptInterface(new JavaScriptInterface(this), "Android");
         
-        myWebView.loadUrl("file:///data/data/kap.placity_beta/app_games/"+id+"/0.php?count=0&points=0&code=0");
+        myWebView.loadUrl("file:///data/data/kap.placity_beta/app_games/"+id+"/0.html");
         
         myLoadingBar = (ProgressBar) findViewById(R.id.progressBar1);
         

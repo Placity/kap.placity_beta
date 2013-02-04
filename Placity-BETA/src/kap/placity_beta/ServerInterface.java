@@ -16,8 +16,8 @@ import android.util.Log;
 
 public class ServerInterface {
 
-	//public static final String SERVER_URL = "http://www.blendboom.lima-city.de/APP2/";
-	public static final String SERVER_URL = "http://www.questioneditor-3.moontec.de/";
+	public static final String SERVER_URL = "http://www.blendboom.lima-city.de/APP2/";
+	//public static final String SERVER_URL = "http://www.questioneditor-3.moontec.de/";
 	
 	
 	//Download filelist

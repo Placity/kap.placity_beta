@@ -1,20 +1,25 @@
 package kap.placity_beta;
 
+import java.io.File;
+
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class ChooseGame extends Activity {
 
     private ListView gameList;
+	private String name;
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,17 +36,44 @@ public class ChooseGame extends Activity {
         {
         	public void onItemClick(AdapterView<?> arg0, View v, int position, long id)
         	{
-        			String name = gameList.getItemAtPosition(position).toString(); //get clicked game id
+        			name = gameList.getItemAtPosition(position).toString(); //get clicked game id
         
-        			Intent i = new Intent(getApplicationContext(), MainActivity.class);
-        			i.putExtra("ID", name);
-        			i.putExtra("sender", "chooseGame");
-        			i.putExtra("loading", false);
-        			startActivity(i); //start main activity with game id and sender
         	}
         });
 	}
 	
+	public void startGame() {
+		if (name != null) {
+		Intent i = new Intent(getApplicationContext(), MainActivity.class);
+		i.putExtra("ID", name);
+		i.putExtra("sender", "chooseGame");
+		i.putExtra("loading", false);
+		startActivity(i); //start main activity with game id and sender
+		}
+		else {
+			Toast.makeText(this, "Wähle ein Game aus!", Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	public void deleteGame() {
+		if (name != null) {
+			new AlertDialog.Builder(this)
+			.setTitle("Warnung")
+			.setMessage("Game unwiederruflich löschen?")
+			.setPositiveButton("Löschen", new DialogInterface.OnClickListener() {
+				
+				public void onClick(DialogInterface dialog, int which) {
+					File dir = new File(getApplicationContext().getDir("games", Context.MODE_PRIVATE).getAbsolutePath() + File.separator + name);
+					dir.delete();
+				}
+			})
+			.setNegativeButton("Abbrechen", null)
+			.show();
+		}
+		else {
+			Toast.makeText(this, "Wähle ein Game aus!", Toast.LENGTH_LONG).show();
+		}
+	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

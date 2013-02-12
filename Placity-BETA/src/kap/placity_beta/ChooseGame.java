@@ -42,7 +42,7 @@ public class ChooseGame extends Activity {
         });
 	}
 	
-	public void startGame() {
+	public void startGame(View view) {
 		if (name != null) {
 		Intent i = new Intent(getApplicationContext(), MainActivity.class);
 		i.putExtra("ID", name);
@@ -55,7 +55,7 @@ public class ChooseGame extends Activity {
 		}
 	}
 	
-	public void deleteGame() {
+	public void deleteGame(View view) {
 		if (name != null) {
 			new AlertDialog.Builder(this)
 			.setTitle("Warnung")

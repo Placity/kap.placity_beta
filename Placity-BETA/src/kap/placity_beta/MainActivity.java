@@ -128,4 +128,10 @@ public class MainActivity extends Activity {
             myLoadingBar.setVisibility(View.INVISIBLE);
     	}
     }
+    
+    @Override
+    public void onBackPressed() {
+    	Intent i = new Intent(getApplicationContext(), Startscreen.class);
+		startActivity(i);
+    }
 }

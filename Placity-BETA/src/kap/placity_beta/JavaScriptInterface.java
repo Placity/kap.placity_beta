@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 public class JavaScriptInterface extends Activity{
 	
@@ -18,8 +19,9 @@ public class JavaScriptInterface extends Activity{
     }
     
     public void get_qrcode() {
-    	IntentIntegrator integrator = new IntentIntegrator(this);
-    	integrator.initiateScan();
+    	Toast.makeText(this, "QR_Scan started. Turn the tablet around and jump up and down!", Toast.LENGTH_LONG).show();
+    	//IntentIntegrator integrator = new IntentIntegrator(this);
+    	//integrator.initiateScan();
     }
     
     public void onActivityResult(int requestCode, int resultCode, Intent intent) { //On return from QR-Scanner!

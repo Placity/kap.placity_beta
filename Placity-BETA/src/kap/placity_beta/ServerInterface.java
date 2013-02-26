@@ -1,15 +1,22 @@
 package kap.placity_beta;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.ByteArrayBuffer;
 
 import android.util.Log;
@@ -21,7 +28,7 @@ public class ServerInterface {
 	
 	
 	//Download filelist
-	public static String getFileList(String id) {
+	public static String getFileList(String id) throws Exception{
 		String data = "?id=" + URLEncoder.encode(id);
 		data += "&command=" + URLEncoder.encode("getFileList");
 		String result = "";
@@ -29,12 +36,40 @@ public class ServerInterface {
 			result = executeHttpRequest(data);
 		}
 		
-		catch (IOException e) {
+		catch (Exception e) {
 			Log.v("error",e.getMessage());
 			Log.v("error", "Stream not read");
 			result = "";
 		}
 		return result;
+		
+//		BufferedReader in =  null;
+//		String data = null;
+//		try{
+//			HttpClient client = new DefaultHttpClient();
+//			URI website = new URI(SERVER_URL + "server.php/?id=" + id + "&command=getFileList");
+//			HttpGet request = new HttpGet();
+//			request.setURI(website);
+//			HttpResponse response = client.execute(request);
+//			in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+//			StringBuffer sb = new StringBuffer("");
+//			String l = "";
+//			while ((l = in.readLine()) != null) {
+//				sb.append(l);
+//			}
+//			in.close();
+//			data = sb.toString();
+//			return data;
+//		} finally {
+//			if(in != null){
+//				try{
+//					in.close();
+//					return data;
+//				}catch (Exception e){
+//					e.printStackTrace();
+//				}
+//			}
+//		}
 		
 	}
 	
@@ -69,29 +104,29 @@ public class ServerInterface {
 	} 
 	
 	//Http-Request
-//	public static String executeHttpRequest(String data) {
-//		String result = "";
-//		try {
-//			URL url = new URL(SERVER_URL + "server.php");
-//			URLConnection connection = url.openConnection();
-//			
-//			connection.setDoInput(true);
-//			connection.setDoOutput(true);
-//			//connection.setUseCaches(true);
-//			//connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-//			
-//			DataOutputStream dataOut = new DataOutputStream(connection.getOutputStream());
-//			dataOut.writeBytes(data);
-//			dataOut.flush();
-//			dataOut.close();
-//			
-//			//DataInputStream dataIn = new DataInputStream(connection.getInputStream());
-//			//String inputLine;
-//			//while ((inputLine = dataIn.readLine()) != null) {
-//				//result += inputLine;
-//			//};
-//			//dataIn.close();
-//			
+	public static String executeHttpRequest(String data) {
+		String result = "";
+		try {
+			URL url = new URL(SERVER_URL + "server.php");
+			URLConnection con = url.openConnection();
+			
+			con.setDoInput(true);
+			con.setDoOutput(true);
+			con.setUseCaches(false);
+			//connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			
+			OutputStreamWriter dataOut = new OutputStreamWriter(con.getOutputStream());
+			dataOut.write(data);
+			dataOut.flush();
+			dataOut.close();
+			
+			InputStreamReader dataIn = new InputStreamReader(con.getInputStream());
+			int in;
+			while ((in = dataIn.read()) != -1) {
+				result += (char) in;
+			}
+			dataIn.close();
+			
 //			BufferedReader reader = new BufferedReader (new InputStreamReader(connection.getInputStream()));
 //			StringBuilder string = new StringBuilder();
 //			String inputLine = "";
@@ -100,46 +135,46 @@ public class ServerInterface {
 //				string.append(inputLine);
 //			};
 //			result = string.toString();
-//			
-//		} catch (IOException e) {
-//			Log.v("error",e.getMessage());
-//			Log.v("error", "Server not found");
-//			result = null;
-//		}
-//		return result;
-//	}
-	
-	public static String executeHttpRequest(String data) throws IOException {
-		String result = "";
-		InputStream  is = null;
-		
-		try {		
-			URL url = new URL(SERVER_URL + "server.php" + data);
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			con.setRequestMethod("GET");
-	        con.setDoInput(true);
-	        
-	        con.connect();
-	        
-			is = con.getInputStream();
 			
-			result = readInputToString(is);
-			
-		} 
-		
-		finally {
-				is.close();
-			}
-		
+		} catch (IOException e) {
+			Log.v("error",e.getMessage());
+			Log.v("error", "Server not found");
+			result = null;
+		}
 		return result;
 	}
-
-	public static String readInputToString (InputStream stream) throws IOException{
-		Reader reader = null;
-		reader = new InputStreamReader(stream, "UTF-8");
-		char[] buffer = new char[500];
-		reader.read(buffer);
-		
-		return new String(buffer);
-	}
+	
+//	public static String executeHttpRequest(String data) throws IOException {
+//		String result = "";
+//		InputStream  is = null;
+//		
+//		try {		
+//			URL url = new URL(SERVER_URL + "server.php" + data);
+//			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+//			con.setRequestMethod("GET");
+//	        con.setDoInput(true);
+//	        
+//	        con.connect();
+//	        
+//			is = con.getInputStream();
+//			
+//			result = readInputToString(is);
+//			
+//		} 
+//		
+//		finally {
+//				is.close();
+//			}
+//		
+//		return result;
+//	}
+//
+//	public static String readInputToString (InputStream stream) throws IOException{
+//		Reader reader = null;
+//		reader = new InputStreamReader(stream, "UTF-8");
+//		char[] buffer = new char[500];
+//		reader.read(buffer);
+//		
+//		return new String(buffer);
+//	}
 }

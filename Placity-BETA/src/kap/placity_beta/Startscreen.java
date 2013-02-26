@@ -28,8 +28,13 @@ public class Startscreen extends Activity {
     	//Toast toast = Toast.makeText(getApplicationContext(), "Not yet available", Toast.LENGTH_SHORT);
     	//toast.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
     	//toast.show();
-    	Intent i = new Intent(this, ChooseGame.class);
-    	startActivity(i);
+//    	Intent i = new Intent(this, ChooseGame.class);
+//    	startActivity(i);
+    	Intent i = new Intent(getApplicationContext(), MainActivity.class);
+		i.putExtra("ID", "nothing");
+		i.putExtra("sender", "chooseGame");
+		i.putExtra("loading", false);
+		startActivity(i);
     }
     
     public void startScan(View view) {

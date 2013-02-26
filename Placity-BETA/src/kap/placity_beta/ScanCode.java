@@ -31,11 +31,11 @@ public class ScanCode extends Activity {
     
     public void startGame(View view) {
 //    	Intent download = new Intent (this, DownloadService.class);
-//		  download.putExtra("ID", "59");
+//		  download.putExtra("ID", "74");
 //		  startService(download);
 //	    	
 //		  Intent i = new Intent (this, MainActivity.class);
-//		  i.putExtra("ID", "59");
+//		  i.putExtra("ID", "74");
 //		  i.putExtra("sender", "scanCode");
 //		  startActivity(i);  
     	
@@ -46,7 +46,7 @@ public class ScanCode extends Activity {
     
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
     	  IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent); //get result from external barcode scanner
-    	  if (scanResult != null) {
+    	  if (resultCode == RESULT_OK) {
     		  Intent download = new Intent (this, DownloadService.class);
     		  download.putExtra("ID", scanResult.getContents().substring(scanResult.getContents().lastIndexOf("?")+1));
     		  startService(download); //start download service with scanned id
@@ -58,8 +58,6 @@ public class ScanCode extends Activity {
     		  startActivity(i); //start main activity
     	  }
     	  else {
-    		  Toast toast = Toast.makeText(this, "Scan Canceled", Toast.LENGTH_SHORT); 
-    		  toast.show();
     		  Intent i = new Intent (this, ScanCode.class); //Return to activity
     		  startActivity(i);
     	  }

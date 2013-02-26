@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<GAME>
+<NAME>| Release Preview |</NAME>
+<IMAGE>start.png</IMAGE>
+<DESCRIBTION>Welcome in our app Placity. In this release preview we will try to give you an insight of the functions coming soon in the first version. While the first versions will focus on functionality, later releases will concentrate on user interface and design. Try out the buttons first and then: Have fun!
+</DESCRIBTION>
+
+<SCREEN>
+	<NAME></NAME>
+	<HELPTXT></HELPTXT>
+	<CONTENT>
+	<TYPE>1.3</TYPE>
+	<TXT>Hi! My Name is Mister Averta. I will be your guide for today showing you around a bit. My I introduce my assistant Mr. Juser...</TXT>
+	<SRC>avatar2.jpg</SRC>
+	<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+	<TYPE>1.3</TYPE>
+	<TXT>Good day. I personally don't like long introductions, so I'm going to make it short: Placity is an app for games and guides. Either inside or outside, historical or futuristic, for young or old (or medium age or slightly above), sad or funny. Well I think you got it...</TXT>
+	<SRC>avatar1.jpg</SRC>
+	<ORIENTATION>right</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+	<TYPE>1.3</TYPE>
+	<TXT>I got it, so move on Juser!</TXT>
+	<SRC>avatar2.jpg</SRC>
+	<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTROLS></CONTROLS>
+</SCREEN>
+
+<SCREEN>
+	<HELPTXT>50 seems a bit low, but who knows - maybe on low-carb diet?</HELPTXT>
+	<CONTENT>
+	<TYPE>1.3</TYPE>
+	<TXT>Ok, here we are in the former development area. They moved to the new building, but their work is still here. We made a showcase room out of it. This is just a normal Single Choice Screen: </TXT>
+	<SRC>avatar1.jpg</SRC>
+	<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+		<TYPE>5</TYPE>
+		<TXT></TXT>
+		<QUESTION>The human body contains a lot of carbon. How many pencils could be filled with it?</QUESTION>
+		<ANSWER>5000</ANSWER>
+		<ANSWER>100</ANSWER>
+		<ANSWER>9000</ANSWER>
+		<ANSWER>50</ANSWER>
+		<RANSWER>3</RANSWER>
+		<MESSAGE></MESSAGE>
+		<CMESSAGE>Well, you are the first to get it right ever! Ten points for that.</CMESSAGE>
+		<WMESSAGE>Hm, that's just a tiny little bit to less. It's 9000.</WMESSAGE>
+		<POINTS>10</POINTS>
+		<SRC></SRC>
+	</CONTENT>
+	<CONTROLS></CONTROLS>
+</SCREEN>
+
+
+<SCREEN>
+	<NAME></NAME>
+	<HELPTXT></HELPTXT>
+	<CONTENT>
+		<TYPE>1.2</TYPE>
+		<TXT>Before we go on I want to talk about the company's history a bit. Kaiserdom App Project is a small team of five developers, founded in 2012. Before that they worked on the Salier App, also known as Kaiserdom App. As you may easily find out this is where they got the name from. Placity is basicly the advanced development with new funtions and more possibilities. We will see, in a few (possibly hundred) years they may take over the world's app market selling a billion copies every day ;)</TXT>
+		<SRC></SRC>
+		<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+		<TYPE>1.3</TYPE>
+		<TXT>By the way this is called the Textblock Screen.</TXT>
+		<SRC>avatar2.jpg</SRC>
+		<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTROLS></CONTROLS>
+</SCREEN>
+
+<SCREEN>
+	<NAME></NAME>
+	<HELPTXT></HELPTXT>
+	<CONTENT>
+		<TYPE>1.3</TYPE>
+		<TXT>Oh, that's an interesting one. It's an Image Screen with information about the app's hometown Speyer.</TXT>
+		<SRC>avatar1.jpg</SRC>
+		<ORIENTATION>right</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+		<TYPE>2</TYPE>
+		<TXT>The medieval west city gate is one of the largest and most architecturally significant of the remaining city gates in Germany. It was built between 1230-1250 and completed in 1514! The Old Gate in German called Altpörtel was constructed to mark the end of a via triumphalis that led from the cathedral to the city walls.</TXT>
+		<SRC>gate.jpg</SRC>
+		<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTROLS></CONTROLS>
+</SCREEN>
+
+<SCREEN>
+	<NAME></NAME>
+	<HELPTXT>I guess plain text is not really interesting...</HELPTXT>
+	<CONTENT>
+		<TYPE>1.3</TYPE>
+		<TXT>You may already have noticed that the back button disappears sometimes. That's because you can't go back to a question after you have answered it. Just to prevent cheating ;)</TXT>
+		<SRC>avatar1.jpg</SRC>
+		<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+		<TYPE>1.3</TYPE>
+		<TXT>Let's move on to the interesting screens...</TXT>
+		<SRC>avatar2.jpg</SRC>
+		<ORIENTATION>right</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+		<TYPE>5</TYPE>
+		<TXT></TXT>
+		<QUESTION>Which could it be?</QUESTION>
+		<ANSWER>Plain Text</ANSWER>
+		<ANSWER>Video</ANSWER>
+		<ANSWER>Multiple Choice</ANSWER>
+		<RANSWER>2</RANSWER>
+		<MESSAGE></MESSAGE>
+		<CMESSAGE>Well done!</CMESSAGE>
+		<WMESSAGE>Nope, it's the Video Screen</WMESSAGE>
+		<POINTS>10</POINTS>
+		<SRC></SRC>
+	</CONTENT>
+</SCREEN>
+
+<SCREEN>
+	<HELPTXT></HELPTXT>
+	<CONTENT>
+		<TYPE>4</TYPE>
+		<TXT></TXT>
+		<SRC>promo.ogg</SRC>
+	</CONTENT>
+	<CONTROLS></CONTROLS>
+</SCREEN>
+
+<SCREEN>
+	<HELPTXT>You should have looked at the logo in the beginning. Your own fault!</HELPTXT>
+	<CONTENT>
+		<TYPE>1.3</TYPE>
+		<TXT>This is a Multiple Choice Screen</TXT>
+		<SRC>avatar1.jpg</SRC>
+		<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+		<TYPE>6</TYPE>
+		<TXT></TXT>
+		<QUESTION>Which colors does the KAP logo not use?</QUESTION>
+		<ANSWER>Red</ANSWER>
+		<ANSWER>Orange</ANSWER>
+		<ANSWER>Brown</ANSWER>
+		<ANSWER>Green</ANSWER>
+		<RANSWER>1</RANSWER>
+		<RANSWER>3</RANSWER>
+		<MESSAGE></MESSAGE>
+		<CMESSAGE>You got it! Red and Brown are not in the Logo!</CMESSAGE>
+		<WMESSAGE>You didn't look at the logo in the beginning? Shame on you, next time do it at least 2 minutes longer! There's no red or Brown in it!</WMESSAGE>
+		<POINTS>20</POINTS>
+		<SRC></SRC>
+	</CONTENT>
+	<CONTROLS></CONTROLS>
+</SCREEN>
+
+<SCREEN>
+	<NAME></NAME>
+	<HELPTXT>YES!</HELPTXT>
+	<CONTENT>
+		<TYPE>1.3</TYPE>
+		<TXT>Here we are back in the entrance hall. Did you like the short tour?</TXT>
+		<SRC>avatar2.jpg</SRC>
+		<ORIENTATION>right</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+		<TYPE>7</TYPE>
+		<TXT></TXT>
+		<QUESTION>Yes or no?</QUESTION>
+		<RANSWER>yes</RANSWER>
+		<MESSAGE></MESSAGE>
+		<CMESSAGE>Glad to hear that, but hold on, there's more to come!</CMESSAGE>
+		<WMESSAGE>Well, then let's start over maybe you discover something likeable... you will...I'm sure. Or maybe you find something in the features-to-come list!</WMESSAGE>
+		<POINTS>100</POINTS> 
+	</CONTENT>
+	<CONTROLS></CONTROLS>
+</SCREEN>
+
+<SCREEN>
+	<NAME></NAME>
+	<HELPTXT></HELPTXT>
+	<CONTENT>
+		<TYPE>1.3</TYPE>
+		<TXT>The team is still working on the app and there's already a huge list of features to come in the next weeks. Some of them were suggested from others, some are pretty basic, but here come the top 5:</TXT>
+		<SRC>avatar1.jpg</SRC>
+		<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+		<TYPE>1.1</TYPE>
+		<TXT>1. Map with markers</TXT>
+		<SRC></SRC>
+		<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+		<TYPE>1.1</TYPE>
+		<TXT>2. Language support</TXT>
+		<SRC></SRC>
+		<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+		<TYPE>1.1</TYPE>
+		<TXT>3. QR-Code waypoints</TXT>
+		<SRC></SRC>
+		<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+		<TYPE>1.1</TYPE>
+		<TXT>4. Social Media integration</TXT>
+		<SRC></SRC>
+		<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+		<TYPE>1.1</TYPE>
+		<TXT>5. Variety of designs</TXT>
+		<SRC></SRC>
+		<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+		<TYPE>1.3</TYPE>
+		<TXT>There we go, it's time to say goodbye!</TXT>
+		<SRC>avatar2.jpg</SRC>
+		<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+		<TYPE>1.3</TYPE>
+		<TXT>Bye</TXT>
+		<SRC>avatar1.jpg</SRC>
+		<ORIENTATION>right</ORIENTATION>
+	</CONTENT>
+	<CONTENT>
+		<TYPE>1.3</TYPE>
+		<TXT>Miau</TXT>
+		<SRC>avatar3.jpg</SRC>
+		<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTROLS></CONTROLS>
+</SCREEN>
+
+
+
+<SCREEN>
+	<NAME></NAME>
+	<HELPTXT></HELPTXT>
+	<CONTENT>
+		<TYPE>1.1</TYPE>
+		<TXT>You made it! There were 160 points. You got:</TXT>
+		<SRC></SRC>
+		<ORIENTATION>left</ORIENTATION>
+	</CONTENT>
+	<CONTROLS></CONTROLS>
+</SCREEN>
+
+</GAME>

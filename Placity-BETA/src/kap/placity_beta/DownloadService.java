@@ -29,11 +29,17 @@ public class DownloadService extends IntentService{
 	//Download of filelist and saving of individual files
 	@Override
 	protected void onHandleIntent(Intent intent) {    
-		String files = ServerInterface.getFileList(id); //Returns list of download links
-		Log.v("DS filelist", files);
-        for (String list : files.split(";")){
-			save(id, list); //Save files from list
-		}
+		String files;
+		try {
+			files = ServerInterface.getFileList(id);
+			Log.v("DS filelist", files);
+	        for (String list : files.split(";")){
+				save(id, list); //Save files from list
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} //Returns list of download links
         SystemClock.sleep(500);
         Intent i = new Intent();
         i.setAction("DownloadStep.ONE");

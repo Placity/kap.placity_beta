@@ -71,6 +71,7 @@ public class MainActivity extends Activity {
         myWebView.addJavascriptInterface(new JavaScriptInterface(this), "Android");
         
         myWebView.loadUrl("file:///data/data/kap.placity_beta/app_games/"+id+"/0.html");
+        //myWebView.loadUrl("file:///android_asset/game/0.html");
         
         myLoadingBar = (ProgressBar) findViewById(R.id.progressBar1);
         
@@ -128,4 +129,10 @@ public class MainActivity extends Activity {
             myLoadingBar.setVisibility(View.INVISIBLE);
     	}
     }
+
+    @Override
+	public void onBackPressed() {
+    	Intent i = new Intent(getApplicationContext(), Startscreen.class);
+    	startActivity(i);
+    	}
 }

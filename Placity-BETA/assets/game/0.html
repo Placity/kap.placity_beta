@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="user-scalable=no, width=device-width" />
+
+<script type="text/javascript" charset="utf-8">
+
+var count; //screen count
+count = -1;
+
+var xmlDoc;
+xmlDoc = loadXMLDoc("source.xml");
+
+var screens = xmlDoc.getElementsByTagName("SCREEN");
+
+var type; //screen type - global for remember last screen after function finished 
+var visible = []; //visible screens
+var ranswer; //variable right answer - global for point_calculation() and next() value exchange
+var points;
+points = 0;
+
+var toggleHelp;
+toggleHelp = true;
+
+var qrTries;
+qrTries = 0;
+
+var end = false; //indicates wherether the end is reached AND no endscreen is defined or not
+
+var types = new Array();
+types["0"] = "Start";
+types["1.1"] = "TextPlain";
+types["1.2"] = "TextBlock";
+types["1.3"] = "TextSB"; //Speechbubble
+types["2"] = "Image";
+types["3"] = "Sound";
+types["4"] = "Video";
+types["5"] = "SingleChoice";
+types["6"] = "MultipleChoice";
+types["7"] = "Input";
+types["8"] = "QR-Code";
+types["9"] = "End";
+types["9.1"] = "HCEnd"; //hardcoded endscreen (used when no end is defined)
+
+function loadXMLDoc(dname)
+{
+	xhttp=new XMLHttpRequest();
+	xhttp.open("GET",dname,false);
+	xhttp.send();
+	return xhttp.responseXML;
+}
+
+function Init() {
+	var header = readXMLHeader(xmlDoc);
+	header["type"] = "0";
+	Create(header); //creates the startscreen
+}
+
+function Next(parameter) {
+	if (parameter!="nopoints") {
+		calculate_points();
+	}
+	count++;
+	DestroyContents() //destroy old contents
+	var screen = screens[count];
+	if (count<screens.length) { //If screen is valid
+		var contents = screen.getElementsByTagName("CONTENT");
+		if (count==screens.length-1 && contents.length == 1 && typeCheck(contents[0]) == "1.1") { //If last screen is textscreen it is used to build an endscreen
+			var content = readXMLContent(contents[0]);
+			content["type"] = "9";
+			Create(content);
+			document.getElementById("controls").style.display = "none";
+			document.getElementById("end_controls").style.display = "block";
+		}
+		else {
+			for (var i=0;i<contents.length;i++) {
+				Create(readXMLContent(contents[i]));
+			};
+			document.getElementById("left").setAttribute("active", prevPossible(count));
+			document.getElementById("help").setAttribute("active", (screen.getElementsByTagName("HELPTXT")[0].childNodes[0] != null));
+		};
+	} 
+	else { //after last screen end screen is shown
+		var content = {};
+		content["type"] = "9.1";
+		Create(content);
+		document.getElementById("controls").style.display = "none";
+		document.getElementById("end_controls").style.display = "block";
+	};
+}
+
+function calculate_points() {
+	var screen = xmlDoc.getElementsByTagName("SCREEN")[count];
+	if (screen!=null) {
+		var contents = screen.getElementsByTagName("CONTENT");
+		for (var i=0;i<contents.length;i++) {
+			var content = readXMLContent(contents[i]);
+			switch(types[content.type]) {
+			
+				case ("SingleChoice"):
+					if (contains(getCheckedId("sca"), "sca" + content.ranswers[0])) {
+						points += parseInt(content.points);
+						alert(content.cmessage);
+					}
+					else {
+						alert(content.wmessage);
+					};
+					break;
+				
+				case ("MultipleChoice"):
+					var checked = getCheckedId("mca");
+					var answers = [];
+					var right = 0;
+					for (var k = 0; k < content.ranswers.length; k++){
+						answers.push("mca" + content.ranswers[k]);
+					};
+					for (var i = 0; i < checked.length; i++) {
+						if (contains(answers, checked[i]))
+						{
+							points += parseInt(content.points);
+							right++;
+						}
+						else{
+							points -= parseInt(content.points);
+							right--;
+						};
+					};
+					if (right==answers.length){
+						alert(content.cmessage);
+					}
+					else{
+						alert(content.wmessage);
+					}
+					break;
+				
+				case ("Input"):
+					if (document.getElementById("ia").value.toLowerCase() == content.ranswers[0]) {
+						points += parseInt(content.points);
+						alert(content.cmessage);
+					}
+					else {
+						alert(content.wmessage);
+					};
+					break;	
+			};
+		};
+	};
+}
+
+function Help() {
+	if (xmlDoc.getElementsByTagName("SCREEN")[count] != null) {
+		if (xmlDoc.getElementsByTagName("SCREEN")[count].getElementsByTagName("HELPTXT")[0].childNodes[0] != null) {
+			alert(xmlDoc.getElementsByTagName("SCREEN")[count].getElementsByTagName("HELPTXT")[0].childNodes[0].nodeValue);
+		}
+	} else { //Else we are in startscreen!
+		alert("Here you can get a hint");
+	}	
+}
+
+function Prev() {
+	if (prevPossible(count)) { //Switching to previous screen possible --> prev is no question screen
+		count-=2;
+		Next("nopoints");
+	};
+}
+
+function prevPossible(screencount) {
+	var screen = xmlDoc.getElementsByTagName("SCREEN")[screencount-1] 
+	if (screen!=null) {
+		var prevpos = true; //Prev possible
+		var contents = screen.getElementsByTagName("CONTENT");
+		for (var i=0;i<contents.length;i++) {
+			var type = types[typeCheck(contents[i])];
+			if (type == "MultipleChoice" || type == "SingleChoice" || type == "Input" || type == "QR-Code") {
+				prevpos = false;
+			};
+		};
+		return prevpos;
+	}
+	else {
+		return false;
+	};
+}
+
+function DestroyContents() {
+	var handler = document.getElementById("apcpp_contents");
+	while (handler.hasChildNodes()) {
+		handler.removeChild(handler.firstChild);
+	}
+}
+
+function getCheckedId(name) {
+    var elements = document.getElementsByName(name);
+	var output = [];
+	
+    for (var i=0, len=elements.length; i<len; ++i)
+        if (elements[i].checked) output.push(elements[i].id);
+	return output;
+}
+
+function contains(a, obj) {
+    for (var i = 0; i < a.length; i++) {
+        if (a[i] === obj) {
+            return true;
+        };
+    };
+    return false;
+}
+
+function End() {	
+		Android.End();
+	}
+
+function Create(content) {
+	switch (types[content.type]) {
+		case "Start":
+			var section = document.createElement("section");
+			section.setAttribute('class','appcontent_start');
+			section.setAttribute('type','start');
+			var gamename = document.createElement("h1");
+			gamename.innerHTML = content.name
+			section.appendChild(gamename);
+			var gameicon = document.createElement("img");
+			gameicon.setAttribute('src', content.icon);
+			section.appendChild(gameicon);
+			var gamedes = document.createElement('p');
+			gamedes.innerHTML = content.description;
+			section.appendChild(gamedes);
+			document.getElementById("apcpp_contents").appendChild(section);
+			break;
+		
+		case "TextPlain":
+			var section = document.createElement("section");
+			section.setAttribute('class','appcontent_txt');
+			section.setAttribute('type','plaintext');
+			var txt = document.createElement("p");
+			txt.innerHTML = content.txt;
+			section.appendChild(txt);
+			document.getElementById("apcpp_contents").appendChild(section);
+			break;
+		
+		case "TextBlock":
+			var section = document.createElement("section");
+			section.setAttribute('class', 'appcontent_txt');
+			section.setAttribute('type','textblock');
+			var txt = document.createElement("p");
+			txt.innerHTML = content.txt;
+			section.appendChild(txt);
+			document.getElementById("apcpp_contents").appendChild(section);
+			break;
+			
+		case "TextSB":
+			var section = document.createElement("section");
+			section.setAttribute('class','appcontent_txt');
+			section.setAttribute('type','quotation');
+			var table = document.createElement('table');
+			var tr = document.createElement('tr');
+			var td1 = document.createElement('td');
+			var img = document.createElement('img');
+			img.src = content.src;
+			td1.appendChild(img);
+			var td2 = document.createElement('td');
+			var txt = document.createElement('p');
+			txt.innerHTML = content.txt;
+			td2.appendChild(txt);
+			if (content.orientation == 'right') {
+				section.setAttribute('orientation', 'right');
+				tr.appendChild(td2);
+				tr.appendChild(td1);
+			} else {
+				section.setAttribute('orientation','left');
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+			};
+			table.appendChild(tr);
+			section.appendChild(table);
+			document.getElementById("apcpp_contents").appendChild(section);
+			break;
+			
+		case "Image":
+			var section = document.createElement("section");
+			section.setAttribute('class', 'appcontent_img');
+			//color attribute?
+			var img=document.createElement('img');
+			img.src=content.src;
+			section.appendChild(img);
+			var txt=document.createElement('p');
+			txt.innerHTML=content.txt;
+			section.appendChild(txt);
+			document.getElementById("apcpp_contents").appendChild(section);
+			break;
+			
+		case "Sound":
+			var section = document.createElement("section");
+			section.setAttribute('class','appcontent_audio');
+			//color
+			var audio=document.createElement('audio');
+			audio.setAttribute('controls','controls');
+			var source=document.createElement('source');
+			source.type='audio/mp3';
+			source.src=content.src;
+			audio.appendChild(source);
+			section.appendChild(audio);
+			var txt=document.createElement('p');
+			txt.innerHTML=content.txt;
+			section.appendChild(txt);
+			document.getElementById("apcpp_contents").appendChild(section);
+			break;
+			
+		case "Video":
+			var section = document.createElement("section");
+			section.setAttribute('class','appcontent_video');
+			//color
+			var video=document.createElement('video');
+			video.setAttribute('controls','controls');
+			video.setAttribute('id','video');
+			var source=document.createElement('source');
+			source.type='video/ogg';
+			source.src=content.src;
+			video.appendChild(source);
+			section.appendChild(video);
+			var txt=document.createElement('p');
+			txt.innerHTML=content.txt;
+			section.appendChild(txt);
+			document.getElementById("apcpp_contents").appendChild(section);
+			break;
+			
+		case "SingleChoice":
+			var section = document.createElement("section");
+			section.setAttribute('class','appcontent_snglchoice');
+			//color
+			var p=document.createElement('p');
+			p.innerHTML = content.question;
+			section.appendChild(p);
+			var answers = content.answers;
+			var a, ap, li, ul;
+			ul = document.createElement('ul');
+			ul.setAttribute('id','scal');
+			for (var i=0;i<answers.length;i++) {
+				li = document.createElement('li');
+				a = document.createElement('input');
+				ap = document.createElement('label');
+				a.setAttribute('type','radio');
+				a.setAttribute('class','button');
+				a.setAttribute('id','sca'+(i+1));
+				a.setAttribute('name','sca');
+				ap.setAttribute('for','sca'+(i+1));
+				ap.innerHTML=answers[i];
+				li.appendChild(a);
+				li.appendChild(ap);
+				ul.appendChild(li);
+			}
+			section.appendChild(ul);
+			document.getElementById("apcpp_contents").appendChild(section);
+			break;
+			
+		case "MultipleChoice":
+			var section = document.createElement("section");
+			section.setAttribute('class','appcontent_mltplchoice');
+			//color
+			var p=document.createElement('p');
+			p.innerHTML = content.question;
+			section.appendChild(p);
+			var answers = content.answers;
+			var a, ap, li, ul;
+			ul = document.createElement('ul');
+			ul.setAttribute('id','mcal');
+			for (var i=0;i<answers.length;i++) {
+				li = document.createElement('li');
+				a=document.createElement('input');
+				ap=document.createElement('label');
+				a.setAttribute('type','checkbox');
+				a.setAttribute('class','button');
+				a.setAttribute('id','mca'+(i+1));
+				a.setAttribute('name','mca');
+				ap.setAttribute('for','mca'+(i+1));
+				ap.innerHTML=answers[i];
+				li.appendChild(a);
+				li.appendChild(ap);
+				ul.appendChild(li);			
+			}
+			section.appendChild(ul);
+			document.getElementById("apcpp_contents").appendChild(section);
+			break;				
+
+		case "Input":
+			var section = document.createElement("section");
+			section.setAttribute('class','appcontent_txtinput');
+			//color
+			var p=document.createElement('p');
+			p.innerHTML=content.question;
+			section.appendChild(p);
+			var a=document.createElement('input');
+			a.setAttribute('type','text');
+			a.setAttribute('id','ia');
+			section.appendChild(a);
+			document.getElementById("apcpp_contents").appendChild(section);
+			break;
+			
+		case "QR-Code":
+			qr_scan();
+			break;
+			
+		case "HCEnd":
+			var section = document.createElement("section");
+			section.setAttribute('class','appcontent_end');
+			var txt = document.createElement("p");
+			txt.innerHTML = "Congratulations! Here are your points:";
+			section.appendChild(txt);
+			var p = document.createElement("h1");
+			p.innerHTML = points;
+			section.appendChild(p);
+			document.getElementById("apcpp_contents").appendChild(section);
+			break;
+			
+		case "End":
+			var section = document.createElement("section");
+			section.setAttribute('class','appcontent_end');
+			var txt = document.createElement("p");
+			txt.innerHTML = content.txt;
+			section.appendChild(txt);
+			var p = document.createElement("h1");
+			p.innerHTML = points;
+			section.appendChild(p);
+			document.getElementById("apcpp_contents").appendChild(section);
+			break;
+	};
+}
+
+//############ XML Functions ############# 
+function typeCheck(input) {
+	return input.getElementsByTagName("TYPE")[0].childNodes[0].nodeValue;
+}
+
+function readXMLHeader(input) {
+	var result = {};
+	result["name"] = (input.getElementsByTagName("NAME")[0] != null && input.getElementsByTagName("NAME")[0].childNodes[0] != null) ? input.getElementsByTagName("NAME")[0].childNodes[0].nodeValue : "";
+	result["icon"] = (input.getElementsByTagName("IMAGE")[0] != null && input.getElementsByTagName("IMAGE")[0].childNodes[0] != null) ? input.getElementsByTagName("IMAGE")[0].childNodes[0].nodeValue : "";
+	result["description"] = (input.getElementsByTagName("DESCRIBTION")[0] != null && input.getElementsByTagName("DESCRIBTION")[0].childNodes[0] != null) ? input.getElementsByTagName("DESCRIBTION")[0].childNodes[0].nodeValue : "";
+	
+	return result;
+}
+
+function readXMLContent(input) {
+	var result = {};
+	result["type"] = (input.getElementsByTagName("TYPE")[0] != null && input.getElementsByTagName("TYPE")[0].childNodes[0] != null) ? input.getElementsByTagName("TYPE")[0].childNodes[0].nodeValue : "";
+	result["txt"] = (input.getElementsByTagName("TXT")[0] != null && input.getElementsByTagName("TXT")[0].childNodes[0] != null) ? input.getElementsByTagName("TXT")[0].childNodes[0].nodeValue : "";
+	result["src"] = (input.getElementsByTagName("SRC")[0] != null && input.getElementsByTagName("SRC")[0].childNodes[0] != null) ? input.getElementsByTagName("SRC")[0].childNodes[0].nodeValue : "";
+	result["orientation"] = (input.getElementsByTagName("ORIENTATION")[0] != null && input.getElementsByTagName("ORIENTATION")[0].childNodes[0] != null) ? input.getElementsByTagName("ORIENTATION")[0].childNodes[0].nodeValue : "";
+	result["question"] = (input.getElementsByTagName("QUESTION")[0] != null && input.getElementsByTagName("QUESTION")[0].childNodes[0] != null) ? input.getElementsByTagName("QUESTION")[0].childNodes[0].nodeValue : "";
+	result["message"] = (input.getElementsByTagName("MESSAGE")[0] != null && input.getElementsByTagName("MESSAGE")[0].childNodes[0] != null) ? input.getElementsByTagName("MESSAGE")[0].childNodes[0].nodeValue : "";
+	result["cmessage"] = (input.getElementsByTagName("CMESSAGE")[0] != null && input.getElementsByTagName("CMESSAGE")[0].childNodes[0] != null) ? input.getElementsByTagName("CMESSAGE")[0].childNodes[0].nodeValue : "";
+	result["wmessage"] = (input.getElementsByTagName("WMESSAGE")[0] != null && input.getElementsByTagName("WMESSAGE")[0].childNodes[0] != null) ? input.getElementsByTagName("WMESSAGE")[0].childNodes[0].nodeValue : "";
+	result["points"] = (input.getElementsByTagName("POINTS")[0] != null && input.getElementsByTagName("POINTS")[0].childNodes[0] != null) ? input.getElementsByTagName("POINTS")[0].childNodes[0].nodeValue : "";
+		
+	var answers = []
+	for (var a=0;a<input.getElementsByTagName("ANSWER").length;a++) {
+		answers[a] = (input.getElementsByTagName("ANSWER")[a] != null && input.getElementsByTagName("ANSWER")[a].childNodes[0] != null) ? input.getElementsByTagName("ANSWER")[a].childNodes[0].nodeValue : "";
+	}
+	result["answers"] = answers;
+	
+	var answers = []
+	for (var a=0;a<input.getElementsByTagName("RANSWER").length;a++) {
+		answers[a] = (input.getElementsByTagName("RANSWER")[a] != null && input.getElementsByTagName("RANSWER")[a].childNodes[0] != null) ? input.getElementsByTagName("RANSWER")[a].childNodes[0].nodeValue : "";
+	}
+	result["ranswers"] = answers;
+	return result;
+}
+
+</script>
+<style type="text/css">
+
+/*
+  ###############
+  #             # Header (General L.)
+  #_____________#  -> headerpic (Section L.)
+  #             #
+  #             # Appcontent (General L.)
+  #             #  -> appcontent_xxx (Section L.)
+  #             # 
+  #_____________#
+  #             # Controls (General L.)
+  #             #  -> left,right,help,end (Section L.)
+  ###############
+
+   1) General Layout
+   2) Section Layout
+*/
+
+/*			1) GENERAL LAYOUT			*/
+
+html {
+	height: 100%;
+}
+
+body {
+	background-color: #fff;
+	margin: 0;
+	padding: 0;
+	font-family: Arial;
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	max-width: 500px;
+	max-height: 735px;
+}
+
+#header {
+	height: 15%;
+	padding: 2%;
+	position: absolute;
+	left: 50%;
+	margin-left: -33.6%;
+}
+
+#apcpp_contents {
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	height: 70%;
+	overflow: auto;
+	position: absolute;
+	top: 17%;
+}
+
+.appcontent_start,
+.appcontent_txt,
+.appcontent_img,
+.appcontent_audio,
+.appcontent_video,
+.appcontent_snglchoice,
+.appcontent_mltplchoice,
+.appcontent_txtinput,
+.appcontent_end {
+	width: 90%;
+	padding: 4%;
+}
+
+
+#controls {
+	height: 12%;
+	width: 66%;
+	position: absolute;
+	left: 50%;
+	margin-left: -33%;
+	bottom: 0;
+	z-index: 200;
+	background-color: transparent;
+}
+
+#end_controls {
+	display: none;
+	height: 12%;
+	width: 66%;
+	position: absolute;
+	left: 50%;
+	margin-left: -33%;
+	bottom: 0;
+	z-index: 200;
+	background-color: #fff;
+	max-width: 500px;
+}
+
+/*			2) SECTION LAYOUT			*/
+
+/*			2.1) HEADER					*/
+
+#headerpic {
+	height: 100%;
+}
+
+/*			2.2) CONTROLS				*/
+
+#left[active=true]{
+	width: 48px;
+	height: 48px;
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QENEDgybhAaNwAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAABjklEQVRo3u2ZwUrDQBRFjym1qbqwWMSFFtz4B4L4/wvBlSuFgiBGu2mJBcVKoXXhK4QhaZNpJ5knc7cTwj2Zybw3dyAoKCioSe3t6D0D4AyIgU/gBZhoAGgD10A/Z+wRGLoGaG1p/gY4KRjvA2Pg20eAlfnehtndB95cAkSOzK905HoJRQ7NA/z4BFDVPEDiC4CN+bFsp40D2JhPgXsf6oCt+Ttg3jSA9+bXAagwXwSgxnwegCrzJoA681kAG/N16kN6qmdgaTZzEXDrsXnknHEqHW5iAlwB50oOYAcyA5NsJb5QdoocmK1ErAwgNgFmygBmJkCiDCAxAYayTWlQagYFLfmr32WL6npqfCo14AFY/KtKnE0lFsCo4kx05fmR+WWaAFAJkZcLqYIoCrbUQKxL5lRAbIoWvYcok43aQhzXUeXLhrs2EIf8JdNTHwBsIdrAq0uAquHuXCpvWvL5juslZBOvV4H48uUfsFlOS2m+vLyhyUL05Kxq6qmOXWhXt5SXkhp0qPmWMihoS/0CxapteUft47sAAAAASUVORK5CYII=);
+	display: inline-block;
+	position: absolute;
+	top: 50%;
+	left: 0px;
+	margin-top: -24px;
+}
+
+#help[active=true]{
+	width: 48px;
+	height: 48px;
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QENEDgXJRTOcAAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAACwklEQVRo3u2YW09TURCFv7aCUKBQbFELGnjQmJigCURRX/3ZvppovCQSTYwQg0IwlgLljkWqL6tJc7JvpxfQZK+kL+fss2fW7JlZswsRERERERERl4dMH/YcBMaBfOL5MbAHNP5FAnngFlABxjxrD4BNYF2kLpXAOHBHjneCTWBFJ3OhBAaAe8BsD4LwB1gDPgNnF0FgBrgPXO1x7fwCPgEb/SKQBeaB2441J0qLQ2AfONLzEaAAjCrdhh17fAeWgWYvCQwDi0DR8r6p6K0pJXw2Z3WKWcuaXeCtAuJELrBQnyl6NudfAj9SnGYd2FLnylgCNgPUlFodE5gAnnjy/WNK51s4VdFet7y/onSraW1qAkU5P+jJ+feWd2PATQWhaRGwPdXUgMO/CrBtI2EjUACeOjZu4asilIzcQ+ABcEO/ORXylqE4B4CSJ0sqQNWUTqYiGgKWApxHkUliUflrar+Lhue1QN1Zkm9OAlngkWmhBfuGtJtyrJ8ydLKDQFtD8i3nIjCvnA1FUjknA76Z9OzhayrzLgL9mE5DBLJnHy+nHKySdbIT8M2OZw8X9uSjlcA58CbFzF4wKGjVsb6qNe0YCbTVkDqf+9romTpDJUDojg2d6KeUNEluA/iQdEA6UPLY+Q28MjQNZ86XgMceEifAC8v8U2gr2B2Tcdl/7hnuzoHXtnab80R3VyeRddRAQ7ONaTyu62ebZ+aA6U6dJ0WKuEiUpbCnKRtIEVhwZEErbba7nUZPlNdly1yUkcqeBXaw1ji94LB/JOfrvbzQDMpo2XNi64raYdupDGkcv6YROu/YYwt4F9oJ0wpXBriri3xXAmS5V6wAXwIuRV0r76gkvdQj52sSqMOL/ltlWqdR6PD7fWA17UW+H7NPUYI0rfuAT5Q2gW8GVb40Au2XmQkRylt0pS4SEREREREREf89/gJ+/pewZn2U5wAAAABJRU5ErkJggg==);
+	display: inline-block;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -24px;
+	margin-left: -24px;
+}
+
+#right{
+	width: 48px;
+	height: 48px;
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QENEDcjgzgmCgAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAABfUlEQVRo3u3Zz0sCQRjG8e8alooRlkEQGgQGHrpEh+j/D6L+BImghCIECwJXNO0yXoY1tt133tmBeY666PNZdn7sLsTExMT4TKL4X0fAGdAGUuAdeAkFMACGGZ9PgEdgUfSHdxTKHwJXW05WC+gCb8CqqoBLYP+P75tlEDUFQDvHMR3gBqhXETDPeVwhhMYlVANOch7778tJA/BlptCWC4QGADPnd005UYQWYGXKiCO0AM4QmgAnCG2AOMIHQBThCyCGSLbsUM+BU+BAecudN1PgHlgkGeVvzcJT9UyBO/sSugD6gdyMNYG1vZkLpfwmPRvQCAzQsAFpYIDUBowDA4xtwMiM7hDyCYzsWWgNvAI/wG6Fx8RmHVj6XqTq5jayU2QRw/MqW7q8T4BIeV8AsfI+AKLltQHi5TUBTsqDzpM5gGsX5bUAfeDYRXktQM9VeS3AnqvyWoBvV+W1AE9mkyheXuuxyswAsgbyBHigxDsyX28p58AH8ExMjN/8Al85cJvuJqDlAAAAAElFTkSuQmCC);
+	display: inline-block;
+	position: absolute;
+	top: 50%;
+	right: 0px;
+	margin-top: -24px;
+}
+
+#left[active=false], #help[active=false] {
+	opacity: 50%;
+}
+
+#end{
+	width: 48px;
+	height: 48px;
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QEbDzES5rRtuAAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAACz0lEQVRo3u2Z208TQRTGf7u21RaUFG3QlIvBCxjjLcToi8/+zT6bEG8EjUFIRaMtpAINEEQtrVQf+JoMm21pu7PdrXKSedjZObPznfnmOzM7DuGYC9wEJvRcAgpAw/aHzoQEYBa4ASRULgpUJYxIhWGTHdYFtkQIVNlp0W8CGAOyNqnlBARwC7gesI9VYDkqCk2GRLe+UcjPGsBXoCw6IdpcAaZsr7ugKpQCRo3nKjAvbieAy8AIsA+sARuqMwP3BdiKCoADjBuRnwd+AveBu1q0Y8BVYFggNkWb5voryKdvAFxgBnggSjhGJEvAQ9HFaxc0G5+Bs6IVQF79pIBt4E/YAMwkZarYB+CclKmVDYku+8bidYIkO9eiauwaUW1nWbW1okhhZeK+fbeXjoot6kcM2WxnO8D5Fu9K/VjE2+JsxiOHvwUuK6772aYy7zUP3Q7ku9LtIg66lcgBjw0ZfQ78Au5IXUxbB94DaeCJMfsvoswDU0Yic5SkNiSp34DvivqK6oaBR0DSk/wqUQGY8/SRkJKkNBNlKc4QMA3c8wwegfoUp72Qq8FOD4KcFS2MoRTEOSiFTEU6FKCP2ko4PrvU11Ics33XymNThbx9NQfyVOvAtBrwzKdtbM7Ec4YiFdtQZVRtY3EmNu2SqLMFvFFw8kYOKChn5IB63AAkDXnMafBLKubhJ+dpX48LhdId7ConTvCJdAYynucZqc66cWiZ9fHZiysAF7it0qlPrCgUlk9oADJ98jkF8E9SKOmzRQ7TzzqAdES+1gBkIvI9BfBfUOiHykBSqAa8VKkNGoUawIIxAwv434NFTqFWWv6O4/96KqqzngvcEKK/ytFFhtfW9M7qLLiW+V+m/Y3jstpYWwc2AewCix34LHL8fiATBwpVgVcc/es5yQ6lTNW4UKiuAR104deU2HocZuBtj2fbPdHJyra6V8tb6GM8iPNfLYST7dPdRnoAAAAASUVORK5CYII=);
+	display: inline-block;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -24px;
+	margin-left: -24px;
+}
+
+/*			2.3) APPCONTENT_START		*/
+
+section.appcontent_start h1{
+	color:#222222;
+	font-family:Arial;
+	font-size:20px;
+	margin: auto;
+	text-align: center;
+}
+
+section.appcontent_start img{
+	margin: 10px auto 10px auto;
+	display:block;
+	border:1px solid #cfcfcf;
+	background: #fcfcfc;
+	padding:5px;
+	max-width:100%;
+	max-height: 100%;
+	width: auto;
+	height: auto;
+}
+
+/*			2.4) APPCONTENT_TXT			*/
+
+section.appcontent_snglchoice>p:first-of-type,
+section.appcontent_mltplchoice>p:first-of-type,
+section.appcontent_txtinput>p:first-of-type,
+section.appcontent_txt p,
+section.appcontent_start p{
+	color:#222222;
+	font-family:Arial;
+	font-size:12px;
+	margin: auto;
+	text-align: justify;
+}
+
+section.appcontent_snglchoice>p,
+section.appcontent_mltplchoice>p{
+	color:#222222;
+	font-family:Arial;
+	font-size:12px;
+	margin: 5px 0px -5px 0px;
+	width:290px;	
+	text-align:left;
+}
+
+section.appcontent_txt p[type=plaintext]{
+	color:#222222;
+	font-family:Arial;
+	font-size:12px;
+	width:100%;
+}
+
+section.appcontent_snglchoice>p:first-of-type,
+section.appcontent_mltplchoice>p:first-of-type,
+section.appcontent_txtinput>p:first-of-type,
+section.appcontent_txt[type=textblock] p{
+	border-left:4px solid #e95e13;
+	padding-left:10px;	
+	text-align: left;
+	width: 100%;
+}
+
+section.appcontent_txt[type=quotation]{
+	margin-top:10px;
+}
+
+section.appcontent_txt[type=quotation] p{
+	margin:0px 10px 10px 10px;
+	border:1px solid #b6b6b6;
+	border-radius:3px;
+	padding:5px;
+	box-shadow:2px 2px 3px 0px rgba(0,0,0,0.1);
+	position: relative;
+	min-height:20px;
+	min-width: 50px;
+	text-align: center;
+	width: auto;
+}
+
+section.appcontent_txt[type=quotation] p:empty{
+	display:none;	
+}
+
+section.appcontent_txt[type=quotation][orientation=left] p:before{
+	content: '';
+	border:10px solid;
+	border-color:transparent #b6b6b6 transparent transparent;
+	width:0px;
+	height:0px;
+	left:-20px;
+	top:5px;
+	position:absolute;
+}
+
+section.appcontent_txt[type=quotation][orientation=left] p:after{
+	content: '';
+	border:8px solid;
+	border-color:transparent rgb(246,250,242) transparent transparent;
+	width:0px;
+	height:0px;
+	left:-16px;
+	top:7px;
+	position:absolute;
+}
+
+section.appcontent_txt[type=quotation][orientation=right] p:before{
+	content: '';
+	border:10px solid;
+	border-color:transparent transparent transparent #b6b6b6;
+	width:0px;
+	height:0px;
+	right:-20px;
+	top:5px;
+	position:absolute;
+}
+
+section.appcontent_txt[type=quotation][orientation=right] p:after{
+	content: '';
+	border:8px solid;
+	border-color:transparent transparent transparent rgb(246,250,242);
+	width:0px;
+	height:0px;
+	right:-16px;
+	top:7px;
+	position:absolute;
+}
+
+/*			2.5) APPCONTENT_VIDEO			*/
+
+section.appcontent_video,
+section.appcontent_audio,
+section.appcontent_img {
+	padding-top:5px;
+	padding-bottom:5px;
+	margin: auto;
+}
+
+#video {
+	width: 100%;
+}
+
+section.appcontent_img img{
+	float: none;
+	margin:auto;
+	display:block;
+	border:1px solid #cfcfcf;
+	background: #fcfcfc;
+	padding:5px;
+	max-width:100%;
+	max-height: 100%;
+	width: auto;
+	height: auto;
+	
+	/* da -162 statt 150 eim #apcpp_contents, mit width:300px */
+/* 	margin-left:6px; */
+}
+
+
+section.appcontent_video p:empty,
+section.appcontent_audio p:empty,
+section.appcontent_img p:empty{
+	display:none;
+}
+
+section.appcontent_video p,
+section.appcontent_audio p,
+section.appcontent_img p{
+	float: none;
+	margin:auto;
+	display:block;
+	border:1px solid #cfcfcf;
+	background: #fcfcfc;
+	padding:3px;
+	margin-top:5px;
+	
+	font-family:Arial;
+	font-size:10px;
+	width:100%;
+}
+
+
+/*			2.6) APPCONTENT_SINGLE-/MULTIPLE-CHOICE			*/
+
+#scal, #mcal {
+	list-style-position: inside;
+}
+
+#scal li, #mcal li {
+	list-style: none;
+	line-height: 40px;
+	font-size: 20px;
+}
+
+input[type=checkbox] {
+	opacity: 0;
+}
+
+input[type=checkbox]:checked + label{
+	font-size: 30px;
+	color: #000;
+	position: relative;
+	left: -30px;
+}
+
+input[type=checkbox]:checked + label:before {
+	content: "\00BB";
+	color: #ed7020;
+	font-size: 40px;
+}
+
+input[type=radio] {
+	opacity: 0;
+}
+
+input[type=radio]:checked + label{
+	font-size: 30px;
+	color: #000;
+	position: relative;
+	left: -30px;
+}
+
+input[type=radio]:checked + label:before {
+	content: "\00BB";
+	color: #ed7020;
+font-size: 40px;
+}
+
+input[type=text] {
+	line-height: 40px;
+	font-size: 20px;
+	width:80%;
+	border-radius:5px;
+	background:#fff;
+	border:1px solid #c0bfbf;
+	margin: 10px 10% 0 10%;	
+}
+
+/*			2.7) APPCONTENT_END			*/
+
+section.appcontent_end p {
+	text-align: center;
+	color:#222222;
+	font-family: Arial;
+	font-size: 15px;
+}
+
+section.appcontent_end h1 {
+	text-align: center;
+	color:#222222;
+	font-family: Arial;
+	font-size: 40px;
+}
+
+/*			SCROLLBARS			*/
+
+::-webkit-scrollbar-track {
+	background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #000;
+	opacity: 50%; 
+}
+
+::-webkit-scrollbar-button {
+	background-color: transparent;
+} 
+
+</style>
+</head>
+<body onload="Init()">
+<header id="header"><img id="headerpic" src="appheader.png"/></header>
+<div id="apcpp_contents"></div>
+
+<footer id="controls">
+	<span id="left" onclick="Prev()" active="true"></span>
+	<span id="help" onclick="Help()" active="true"></span>
+	<span id="right"onclick="Next()"></span>
+</footer>
+
+<footer id="end_controls">
+<span id="end" onclick="End()"></span>
+</footer>
+
+</body>
+</html>

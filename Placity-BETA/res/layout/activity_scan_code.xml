@@ -23,7 +23,7 @@
         android:layout_marginLeft="60dp"
         android:layout_marginRight="60dp"
         android:layout_marginTop="60dp"
-        android:text="To download a game to your device, please press &quot;Start&quot; and scan the game code at your gamecard. " />
+        android:text="Scanne einen Barcode von der Webseite oder deiner Gamecard um ein Spiel herunterzuladen (Hierzu ist eine bestehende Internetverbindung nötig. Je nach gewähltem Spiel können mehrere MB enthalten sein. Wlan-Verbindung empfohlen!)" />
 
 </RelativeLayout>
 

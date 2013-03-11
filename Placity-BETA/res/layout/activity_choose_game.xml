@@ -4,11 +4,16 @@
     android:layout_height="match_parent" >
 
     <ListView
-        android:id="@+id/listView1"
+        android:id="@id/android:list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" >
+        android:drawSelectorOnTop="false">
     </ListView>
+
+    <TextView
+        android:id="@id/android:empty"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:text="@string/no_games" />
 
 </RelativeLayout>

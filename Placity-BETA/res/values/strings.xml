@@ -9,5 +9,7 @@
     <string name="title_activity_scan_code">ScanCode</string>
     <string name="title_activity_choose_game">ChooseGame</string>
     <string name="title_activity_map">Map</string>
+    <string name="no_games">Keine Games installiert!</string>
+    <string name="no_description">Keine Beschreibung verfügbar!</string>
 
 </resources>

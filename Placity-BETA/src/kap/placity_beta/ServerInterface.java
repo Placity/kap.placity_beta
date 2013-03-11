@@ -1,22 +1,15 @@
 package kap.placity_beta;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.ByteArrayBuffer;
 
 import android.util.Log;
@@ -24,12 +17,12 @@ import android.util.Log;
 public class ServerInterface {
 
 	//public static final String SERVER_URL = "http://www.blendboom.lima-city.de/APP2/";
-	public static final String SERVER_URL = "http://www.questioneditor-3.moontec.de/";
-	
+	//public static final String SERVER_URL = "http://www.questioneditor-3.moontec.de/";
+	public static final String SERVER_URL = "http://kaiserdomapp.medienundbildung.com/homepage/questioneditor/";
 	
 	//Download filelist
 	public static String getFileList(String id) throws Exception{
-		String data = "?id=" + URLEncoder.encode(id);
+		String data = "id=" + URLEncoder.encode(id);
 		data += "&command=" + URLEncoder.encode("getFileList");
 		String result = "";
 		try {
@@ -108,12 +101,13 @@ public class ServerInterface {
 		String result = "";
 		try {
 			URL url = new URL(SERVER_URL + "server.php");
-			URLConnection con = url.openConnection();
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			
+			//con.setRequestMethod("GET");
 			con.setDoInput(true);
 			con.setDoOutput(true);
 			con.setUseCaches(false);
-			//connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			
 			OutputStreamWriter dataOut = new OutputStreamWriter(con.getOutputStream());
 			dataOut.write(data);

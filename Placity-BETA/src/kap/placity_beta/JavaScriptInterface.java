@@ -17,16 +17,19 @@ public class JavaScriptInterface extends Activity{
         jsContext = c;
     }
     
-    public void get_qrcode() {
+    public void qr_code() {
     	IntentIntegrator integrator = new IntentIntegrator(this);
     	integrator.initiateScan();
     }
     
     public void onActivityResult(int requestCode, int resultCode, Intent intent) { //On return from QR-Scanner!
   	  IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent); //get result from external barcode scanner
-  	  if (scanResult != null) {
+  	  if (resultCode == RESULT_OK) {
   		  MainActivity.myWebView.loadUrl("javascript:onScan('" + scanResult.getContents() + "');");
   	  }
+	  else {
+		  MainActivity.myWebView.loadUrl("javascript:onScanFailed();");
+	  }
   	}
     
     public boolean isResume() {

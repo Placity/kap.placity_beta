@@ -3,9 +3,12 @@ package kap.placity_beta;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Toast;
 
 public class Startscreen extends Activity {
 
@@ -40,6 +43,15 @@ public class Startscreen extends Activity {
     public void startScan(View view) {
     	Intent i = new Intent(this, ScanCode.class);
     	startActivity(i);
+    }
+    
+    public void showInfo(View view) {
+    	LayoutInflater inflater = getLayoutInflater();
+    	View view2 = inflater.inflate(R.layout.toast_info, (ViewGroup) findViewById(R.id.toastLayout));
+    	Toast toast = new Toast(this);
+    	toast.setView(view2);
+    	toast.setDuration(Toast.LENGTH_LONG);
+    	toast.show();
     }
 	
 }

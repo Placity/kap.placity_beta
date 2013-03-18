@@ -5,11 +5,13 @@
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_startscreen">Startscreen</string>
-    <string name="welcome">Herzlich willkommen in unserer App Placity! \nUnsere App? Ja, wir sind das Kaiserdom App Project Team, 5 Schüler, die eine universell einsetzbare App für Führungen und Spiele entwickeln. Es gibt auch ein Workshopangebot von uns, schau doch mal rein! \nwww.kaiserdom-app.de</string>
+    <string name="welcome">Willkommen in der Mannemer sein App. Der App für Entdecker in und um Mannheim! \n powered by: www.kaiserdom-app.de</string>
     <string name="title_activity_scan_code">ScanCode</string>
     <string name="title_activity_choose_game">ChooseGame</string>
     <string name="title_activity_map">Map</string>
     <string name="no_games">Keine Games installiert!</string>
     <string name="no_description">Keine Beschreibung verfügbar!</string>
+    <string name="no_gamename">Unbenannt</string>
+    <string name="information">Placity is a project by Kaiserdom APP Project powering various game and guide apps.</string>
 
 </resources>

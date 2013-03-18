@@ -23,7 +23,7 @@ public class ServerInterface {
 	//Download filelist
 	public static String getFileList(String id) throws Exception{
 		String data = "id=" + URLEncoder.encode(id);
-		data += "&command=" + URLEncoder.encode("getFileList");
+		data += "&command=getFileList";
 		String result = "";
 		try {
 			result = executeHttpRequest(data);
@@ -100,7 +100,7 @@ public class ServerInterface {
 	public static String executeHttpRequest(String data) {
 		String result = "";
 		try {
-			URL url = new URL(SERVER_URL + "server.php");
+			URL url = new URL(SERVER_URL + "server.php" + "?" + data);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			
 			//con.setRequestMethod("GET");
@@ -109,10 +109,10 @@ public class ServerInterface {
 			con.setUseCaches(false);
 			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			
-			OutputStreamWriter dataOut = new OutputStreamWriter(con.getOutputStream());
-			dataOut.write(data);
-			dataOut.flush();
-			dataOut.close();
+//			OutputStreamWriter dataOut = new OutputStreamWriter(con.getOutputStream());
+//			dataOut.write(data);
+//			dataOut.flush();
+//			dataOut.close();
 			
 			InputStreamReader dataIn = new InputStreamReader(con.getInputStream());
 			int in;

@@ -26,6 +26,8 @@ public class MainActivity extends Activity {
 	public static WebView myWebView; //TODO: static ergänzt 
 	private ProgressBar myLoadingBar;
 	private receiver start;
+	private String id;
+	private String sender;
 	
 
     @Override
@@ -38,8 +40,8 @@ public class MainActivity extends Activity {
         final Context myApp = this;
         
         Bundle b = getIntent().getExtras();
-        String id = b.getString("ID");
-        String sender = b.getString("sender");
+        id = b.getString("ID");
+        sender = b.getString("sender");
         //setLoading(b.getBoolean("loading"));
         Log.v("sender ", sender);
         
@@ -70,8 +72,8 @@ public class MainActivity extends Activity {
         myWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY); 
         myWebView.addJavascriptInterface(new JavaScriptInterface(this), "Android");
         
-        myWebView.loadUrl("file:///data/data/kap.placity_beta/app_games/"+id+"/0.html");
-        //myWebView.loadUrl("file:///android_asset/game/0.html");
+        //myWebView.loadUrl("file:///data/data/kap.placity_beta/app_games/"+id+"/0.html");
+        myWebView.loadUrl("file:///android_asset/preload/loading.html");
         
         myLoadingBar = (ProgressBar) findViewById(R.id.progressBar1);
         
@@ -109,7 +111,8 @@ public class MainActivity extends Activity {
 			
 			//setLoading(false);
 			
-			myWebView.reload(); 
+			//myWebView.reload();
+			myWebView.loadUrl("file:///data/data/kap.placity_beta/app_games/"+id+"/0.html");
 		}
 	}
     

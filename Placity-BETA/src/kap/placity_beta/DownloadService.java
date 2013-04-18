@@ -13,6 +13,7 @@ import android.util.Log;
 public class DownloadService extends IntentService{
 
 	private String id;
+	private int counter;
 	
 	public DownloadService() {
 		super("IntentService");
@@ -28,8 +29,10 @@ public class DownloadService extends IntentService{
 
 	//Download of filelist and saving of individual files
 	@Override
-	protected void onHandleIntent(Intent intent) {    
+	protected void onHandleIntent(Intent intent) {   
+		counter = 0;
 		String files;
+		files = "";
 		try {
 			files = ServerInterface.getFileList(id);
 			Log.v("DS filelist", files);
@@ -40,7 +43,9 @@ public class DownloadService extends IntentService{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} //Returns list of download links
-        SystemClock.sleep(500);
+		while (counter < files.split(";").length) { 
+        SystemClock.sleep(200);
+		}
         Intent i = new Intent();
         i.setAction("DownloadStep.ONE");
         sendBroadcast(i);
@@ -69,6 +74,7 @@ public class DownloadService extends IntentService{
 		catch (Exception e){
 			Log.v("save error",e.getMessage());
 		}
+		counter += 1;
 		
 	}
 

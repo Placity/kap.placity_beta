@@ -72,21 +72,15 @@ public class MainActivity extends Activity {
         myWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY); 
         myWebView.addJavascriptInterface(new JavaScriptInterface(this), "Android");
         
-        //myWebView.loadUrl("file:///data/data/kap.placity_beta/app_games/"+id+"/0.html");
         myWebView.loadUrl("file:///android_asset/preload/loading.html");
         
         myLoadingBar = (ProgressBar) findViewById(R.id.progressBar1);
         
         myLoadingBar.setVisibility(View.INVISIBLE);
         
-//        if (sender.equals("scanCode")) {
-//        	myWebView.setVisibility(View.INVISIBLE);
-//        	myLoadingBar.setVisibility(View.VISIBLE);
-//        }
-//        else {
-//            myWebView.setVisibility(View.VISIBLE);
-//            myLoadingBar.setVisibility(View.INVISIBLE);
-//        };
+        if (sender.equals("chooseGame")) {
+        	myWebView.loadUrl("file:///data/data/kap.placity_beta/app_games/"+id+"/0.html");
+        };
     }
 
     @Override

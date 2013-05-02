@@ -31,11 +31,11 @@ public class ScanCode extends Activity {
     
     public void startGame(View view) {
 //    	Intent download = new Intent (this, DownloadService.class);
-//		  download.putExtra("ID", "126");
+//		  download.putExtra("ID", "127");
 //		  startService(download);
 //	    	
 //		  Intent i = new Intent (this, MainActivity.class);
-//		  i.putExtra("ID", "126");
+//		  i.putExtra("ID", "127");
 //		  i.putExtra("sender", "scanCode");
 //		  startActivity(i);  
     	

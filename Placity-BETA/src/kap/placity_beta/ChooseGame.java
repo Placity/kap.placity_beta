@@ -8,6 +8,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;

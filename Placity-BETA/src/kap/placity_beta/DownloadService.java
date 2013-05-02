@@ -43,6 +43,7 @@ public class DownloadService extends IntentService{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} //Returns list of download links
+		Log.v("test",""+files.split(";").length);
 		while (counter < files.split(";").length) { 
         SystemClock.sleep(200);
 		}

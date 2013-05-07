@@ -43,7 +43,7 @@ public class DownloadService extends IntentService{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} //Returns list of download links
-		Log.v("test",""+files.split(";").length);
+		Log.v("package count:",""+files.split(";").length);
 		while (counter < files.split(";").length) { 
         SystemClock.sleep(200);
 		}
@@ -73,7 +73,7 @@ public class DownloadService extends IntentService{
 		myFile.write(ServerInterface.getGameFile(id, filelink));
 		myFile.close();}
 		catch (Exception e){
-			Log.v("save error",e.getMessage());
+			Log.v("Error | SAVE","Could not save");
 		}
 		counter += 1;
 		
